@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>Интерактивный синус: амплитуда, частота, фаза</title>
     <style>
         * {
@@ -19,16 +19,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 16px;
+            padding: 12px;
         }
 
         .card {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            border-radius: clamp(24px, 5vw, 40px);
-            padding: clamp(20px, 4vw, 30px);
-            box-shadow: 0 30px 50px rgba(0, 10, 30, 0.2), inset 0 1px 4px rgba(255, 255, 255, 0.8);
+            border-radius: clamp(20px, 5vw, 40px);
+            padding: clamp(16px, 4vw, 30px);
+            box-shadow: 0 20px 40px rgba(0, 10, 30, 0.2), inset 0 1px 4px rgba(255, 255, 255, 0.8);
             width: 100%;
             max-width: 1200px;
             border: 1px solid rgba(255, 255, 255, 0.6);
@@ -36,20 +36,20 @@
 
         h1 {
             font-weight: 500;
-            font-size: clamp(1.5rem, 5vw, 2.2rem);
+            font-size: clamp(1.4rem, 6vw, 2.2rem);
             color: #11212e;
-            margin: 0 0 12px 0;
+            margin: 0 0 10px 0;
             letter-spacing: -0.5px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         h1 span {
             background: #1e3b5c;
             color: white;
-            font-size: clamp(0.8rem, 3vw, 1rem);
+            font-size: clamp(0.7rem, 3.5vw, 1rem);
             padding: 4px 12px;
             border-radius: 40px;
             font-weight: 400;
@@ -59,18 +59,18 @@
 
         .canvas-wrapper {
             background: #fdfdfe;
-            border-radius: clamp(20px, 4vw, 32px);
-            padding: clamp(12px, 3vw, 20px);
+            border-radius: clamp(16px, 4vw, 32px);
+            padding: clamp(10px, 3vw, 20px);
             box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.02), 0 12px 24px -8px rgba(0, 20, 40, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.7);
-            margin-bottom: clamp(20px, 4vw, 30px);
+            margin-bottom: clamp(16px, 4vw, 30px);
             width: 100%;
         }
 
         .canvas-container {
             position: relative;
             width: 100%;
-            aspect-ratio: 900 / 450; /* Сохраняем пропорции 2:1 */
+            aspect-ratio: 900 / 450;
             max-width: 100%;
             margin: 0 auto;
         }
@@ -79,30 +79,30 @@
             display: block;
             width: 100%;
             height: 100%;
-            border-radius: clamp(12px, 3vw, 20px);
+            border-radius: clamp(10px, 3vw, 20px);
             background: #ffffff;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             cursor: crosshair;
-            touch-action: none; /* Предотвращает скролл при касании canvas на мобильных */
+            touch-action: none; /* Важно для canvas */
         }
 
         .control-panel {
             display: flex;
             flex-wrap: wrap;
-            gap: clamp(16px, 3vw, 40px);
+            gap: 20px;
             justify-content: center;
             align-items: flex-end;
-            margin-bottom: clamp(20px, 4vw, 30px);
+            margin-bottom: clamp(16px, 4vw, 30px);
             background: rgba(255, 255, 255, 0.4);
             border-radius: clamp(30px, 6vw, 60px);
-            padding: clamp(16px, 3vw, 20px) clamp(20px, 4vw, 30px);
+            padding: 20px 16px;
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
         }
 
         .slider-group {
-            min-width: 160px;
-            flex: 1 1 180px;
+            min-width: 140px;
+            flex: 1 1 160px;
             text-align: center;
         }
 
@@ -110,25 +110,26 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 4px;
             font-weight: 600;
             color: #1e3b5c;
             text-transform: uppercase;
-            letter-spacing: 0.6px;
-            font-size: clamp(0.75rem, 2vw, 0.85rem);
+            letter-spacing: 0.5px;
+            font-size: clamp(0.7rem, 2.5vw, 0.85rem);
             margin-bottom: 8px;
             white-space: nowrap;
         }
 
         .slider-group label i {
             font-style: normal;
-            font-size: clamp(1rem, 3vw, 1.2rem);
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
         }
 
         .slider-wrapper {
             width: 100%;
             display: flex;
             justify-content: center;
+            padding: 0 4px;
         }
 
         input[type=range] {
@@ -140,23 +141,41 @@
             -webkit-appearance: none;
             appearance: none;
             outline: none;
+            touch-action: pan-y; /* Разрешаем вертикальный скролл при касании ползунка */
+        }
+
+        /* Стили для WebKit (Chrome, Safari, Edge) */
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            background: transparent;
+            border-radius: 20px;
         }
 
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             background: white;
             border-radius: 50%;
             box-shadow: 0 4px 8px rgba(0, 20, 40, 0.3);
             border: 2px solid #1d3f5c;
             cursor: grab;
+            margin-top: -8px; /* Центрируем относительно трека */
             transition: 0.05s;
+        }
+
+        /* Стили для Firefox */
+        input[type=range]::-moz-range-track {
+            width: 100%;
+            height: 8px;
+            background: transparent;
+            border-radius: 20px;
         }
 
         input[type=range]::-moz-range-thumb {
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             background: white;
             border-radius: 50%;
             box-shadow: 0 4px 8px rgba(0, 20, 40, 0.3);
@@ -165,7 +184,8 @@
             transition: 0.05s;
         }
 
-        input[type=range]::-webkit-slider-thumb:hover {
+        input[type=range]::-webkit-slider-thumb:hover,
+        input[type=range]::-moz-range-thumb:hover {
             transform: scale(1.1);
         }
 
@@ -174,77 +194,92 @@
             background: #1e3b5c;
             color: white;
             font-weight: 600;
-            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-            padding: 4px 12px;
+            font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+            padding: 4px 8px;
             border-radius: 50px;
             margin-top: 8px;
-            min-width: 70px;
+            min-width: 65px;
         }
 
         .action-buttons {
             display: flex;
             justify-content: center;
-            gap: clamp(12px, 3vw, 20px);
+            gap: 12px;
             flex-wrap: wrap;
         }
 
         .btn {
             background: white;
             border: none;
-            padding: clamp(12px, 3vw, 14px) clamp(20px, 5vw, 32px);
+            padding: 12px 20px;
             border-radius: 50px;
             font-weight: 600;
-            font-size: clamp(1rem, 3vw, 1.1rem);
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
             color: #1d3f5c;
             box-shadow: 0 8px 16px -6px rgba(0, 32, 64, 0.2);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             cursor: pointer;
             transition: all 0.15s;
             border: 1px solid rgba(255, 255, 255, 0.8);
             flex: 0 1 auto;
-            min-width: 160px;
-        }
-
-        .btn:hover {
-            background: #eef3fc;
-            box-shadow: 0 12px 22px -8px #1e3b5c80;
-            transform: scale(1.02);
+            min-width: 140px;
+            -webkit-tap-highlight-color: transparent; /* Убираем серый фон при тапе */
         }
 
         .btn:active {
-            transform: scale(0.98);
+            transform: scale(0.97);
             background: #d9e2f0;
         }
 
         .btn i {
-            font-size: clamp(1.2rem, 4vw, 1.4rem);
+            font-size: clamp(1.1rem, 4vw, 1.4rem);
             filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
         }
 
         footer {
             text-align: center;
-            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            font-size: clamp(0.7rem, 2.5vw, 0.9rem);
             color: #4d6278;
-            margin-top: 20px;
+            margin-top: 16px;
         }
 
-        /* Специально для очень маленьких экранов */
+        /* Специально для маленьких экранов */
         @media (max-width: 480px) {
             body {
                 padding: 8px;
             }
             
+            .card {
+                padding: 12px;
+            }
+            
+            .control-panel {
+                padding: 16px 8px;
+                gap: 16px;
+            }
+            
+            .slider-group {
+                flex-basis: 100%;
+                max-width: 280px;
+            }
+            
             .slider-group label {
-                white-space: normal;
-                flex-direction: column;
-                gap: 2px;
+                white-space: nowrap;
             }
             
             .btn {
-                min-width: 140px;
+                min-width: 130px;
+                padding: 10px 16px;
+            }
+        }
+
+        /* Для очень маленьких экранов */
+        @media (max-width: 360px) {
+            .btn {
+                min-width: 100%;
             }
         }
 
@@ -253,10 +288,20 @@
             input[type=range]::-webkit-slider-thumb {
                 width: 28px;
                 height: 28px;
+                margin-top: -10px;
+            }
+            
+            input[type=range]::-moz-range-thumb {
+                width: 28px;
+                height: 28px;
             }
             
             .btn {
-                padding: 16px 24px;
+                padding: 14px 20px;
+            }
+            
+            .value-badge {
+                padding: 6px 10px;
             }
         }
     </style>
@@ -290,7 +335,7 @@
             </div>
             <div class="value-badge" id="freqValue">1.00</div>
         </div>
-        <!-- Фаза (φ) в радианах, но показываем в pi для наглядности -->
+        <!-- Фаза (φ) -->
         <div class="slider-group">
             <label><i>⏱️</i> Фаза (φ) [×π рад]</label>
             <div class="slider-wrapper">
@@ -302,9 +347,9 @@
 
     <div class="action-buttons">
         <button class="btn" id="exportBtn"><i>📸</i> Экспорт PNG</button>
-        <button class="btn" id="resetBtn"><i>⟲</i> Сброс (1, 1, 0)</button>
+        <button class="btn" id="resetBtn"><i>⟲</i> Сброс</button>
     </div>
-    <footer>↕️ перемещайте ползунки — график меняется в реальном времени</footer>
+    <footer>👆 двигайте ползунки — график меняется</footer>
 </div>
 
 <script>
@@ -325,50 +370,48 @@
         const exportBtn = document.getElementById('exportBtn');
         const resetBtn = document.getElementById('resetBtn');
 
-        // Параметры canvas (физические пиксели остаются 900x450)
-        const w = canvas.width;  // 900
-        const h = canvas.height; // 450
+        // Параметры canvas (физические пиксели 900x450)
+        const w = canvas.width;
+        const h = canvas.height;
         const padding = { left: 70, right: 30, top: 30, bottom: 40 };
         const graphWidth = w - padding.left - padding.right;
         const graphHeight = h - padding.top - padding.bottom;
 
-        // Константы для красивой сетки
+        // Константы для сетки
         const xMin = -2 * Math.PI;
         const xMax = 2 * Math.PI;
         const yMin = -3.0;
         const yMax = 3.0;
 
-        // Предварительные значения
+        // Текущие значения
         let A = 1.0;
         let omega = 1.0;
-        let phase = 0.0;          // в радианах (но ползунок в единицах π)
+        let phase = 0.0; // в радианах
 
-        // Обновление подписей
+        // Флаг для предотвращения множественных рендеров
+        let renderScheduled = false;
+
         function updateLabels() {
             ampValue.innerText = A.toFixed(2);
             freqValue.innerText = omega.toFixed(2);
-            // фаза: показываем как число, умноженное на π
+            
             const phaseInPi = phase / Math.PI;
-            const formatted = phaseInPi.toFixed(2);
-            // Убираем .00 если целое число
             if (Math.abs(phaseInPi) < 0.01) {
                 phaseValue.innerText = '0π';
             } else {
-                phaseValue.innerText = (phaseInPi > 0 ? '+' : '') + formatted + 'π';
+                const sign = phaseInPi > 0 ? '+' : '';
+                phaseValue.innerText = sign + phaseInPi.toFixed(2) + 'π';
             }
         }
 
-        // Преобразование координат (x данных -> экран X)
         function toScreenX(x) {
             return padding.left + ((x - xMin) / (xMax - xMin)) * graphWidth;
         }
 
-        // Преобразование y данных -> экран Y (с учетом переворота)
         function toScreenY(y) {
             return padding.top + graphHeight - ((y - yMin) / (yMax - yMin)) * graphHeight;
         }
 
-        // Отрисовка сетки, осей, подписей
         function drawGridAndAxes() {
             ctx.save();
             ctx.strokeStyle = "#d9e2ec";
@@ -391,7 +434,6 @@
                 ctx.strokeStyle = "#e0e6f0";
                 ctx.stroke();
 
-                // Подпись
                 ctx.fillStyle = "#2f4a6e";
                 let label = (k === 0) ? "0" : (k + "π");
                 ctx.fillText(label, screenX, h - padding.bottom + 18);
@@ -401,6 +443,7 @@
             for (let yVal = -3; yVal <= 3; yVal++) {
                 let screenY = toScreenY(yVal);
                 if (screenY < padding.top || screenY > h - padding.bottom) continue;
+                
                 ctx.beginPath();
                 ctx.moveTo(padding.left, screenY);
                 ctx.lineTo(w - padding.right, screenY);
@@ -435,17 +478,17 @@
             ctx.fillText("x", w - padding.right + 12, yZero - 6);
             ctx.fillText("y", xZero + 12, padding.top - 4);
 
-            // Заголовок функции в углу
+            // Заголовок функции
             ctx.font = "500 15px 'Segoe UI', 'Roboto'";
             ctx.fillStyle = "#1e3b5c";
             ctx.textAlign = "right";
             const phaseInPi = phase / Math.PI;
             ctx.fillText("y = " + A.toFixed(2) + " · sin(" + omega.toFixed(2) + "·x " + 
                 (phase >= 0 ? "+" : "") + phaseInPi.toFixed(2) + "π)", w - 20, 45);
+            
             ctx.restore();
         }
 
-        // Отрисовка синусоиды по текущим параметрам
         function drawSineCurve() {
             ctx.save();
             ctx.beginPath();
@@ -458,20 +501,16 @@
             ctx.lineJoin = "round";
             ctx.lineCap = "round";
 
-            // Шаг по x (data)
-            const step = (xMax - xMin) / 1000; 
+            const step = (xMax - xMin) / 1000;
             let first = true;
 
             for (let x = xMin; x <= xMax; x += step) {
-                // y = A * sin(omega * x + phase)
                 let y = A * Math.sin(omega * x + phase);
-                // clamp y для избежания вылетов за пределы (но рисуем всё, что в пределах yMin/yMax)
                 let screenX = toScreenX(x);
                 let screenY = toScreenY(y);
 
-                // Обрезаем по Y для красоты (не рисуем сильно за границами)
                 if (screenY < padding.top - 5 || screenY > h - padding.bottom + 5) {
-                    first = true; // разрываем линию
+                    first = true;
                     continue;
                 }
 
@@ -486,69 +525,92 @@
             ctx.restore();
         }
 
-        // Главная функция рендера
         function render() {
             ctx.clearRect(0, 0, w, h);
             drawGridAndAxes();
             drawSineCurve();
+            renderScheduled = false;
         }
 
-        // Обработчики ползунков
+        function scheduleRender() {
+            if (!renderScheduled) {
+                renderScheduled = true;
+                requestAnimationFrame(render);
+            }
+        }
+
+        // Обработчики для всех типов событий
         function handleAmpChange(e) {
             A = parseFloat(e.target.value);
             ampValue.innerText = A.toFixed(2);
-            render();
+            scheduleRender();
         }
 
         function handleFreqChange(e) {
             omega = parseFloat(e.target.value);
             freqValue.innerText = omega.toFixed(2);
-            render();
+            scheduleRender();
         }
 
         function handlePhaseChange(e) {
-            // ползунок в единицах π (от -2 до 2)
             let phaseInPi = parseFloat(e.target.value);
-            phase = phaseInPi * Math.PI;   // радианы
-            const display = phaseInPi.toFixed(2);
-            // Показываем с плюсом для положительных значений
+            phase = phaseInPi * Math.PI;
+            
             if (Math.abs(phaseInPi) < 0.01) {
                 phaseValue.innerText = '0π';
             } else {
-                phaseValue.innerText = (phaseInPi > 0 ? '+' : '') + display + 'π';
+                const sign = phaseInPi > 0 ? '+' : '';
+                phaseValue.innerText = sign + phaseInPi.toFixed(2) + 'π';
             }
-            render();
+            scheduleRender();
         }
 
-        ampSlider.addEventListener('input', handleAmpChange);
-        freqSlider.addEventListener('input', handleFreqChange);
-        phaseSlider.addEventListener('input', handlePhaseChange);
-
-        // Поддержка touch-событий для мобильных устройств
-        ['touchstart', 'touchmove', 'touchend'].forEach(eventType => {
-            ampSlider.addEventListener(eventType, (e) => e.preventDefault());
-            freqSlider.addEventListener(eventType, (e) => e.preventDefault());
-            phaseSlider.addEventListener(eventType, (e) => e.preventDefault());
+        // Добавляем обработчики для всех типов событий
+        ['input', 'change'].forEach(eventType => {
+            ampSlider.addEventListener(eventType, handleAmpChange);
+            freqSlider.addEventListener(eventType, handleFreqChange);
+            phaseSlider.addEventListener(eventType, handlePhaseChange);
         });
 
-        // Кнопка сброса (амплитуда 1, частота 1, фаза 0)
+        // Поддержка touch-событий для мобильных устройств
+        ampSlider.addEventListener('touchstart', (e) => e.stopPropagation());
+        ampSlider.addEventListener('touchmove', (e) => {
+            e.stopPropagation();
+            // Принудительно обновляем значение во время движения
+            setTimeout(() => handleAmpChange(e), 0);
+        });
+
+        freqSlider.addEventListener('touchstart', (e) => e.stopPropagation());
+        freqSlider.addEventListener('touchmove', (e) => {
+            e.stopPropagation();
+            setTimeout(() => handleFreqChange(e), 0);
+        });
+
+        phaseSlider.addEventListener('touchstart', (e) => e.stopPropagation());
+        phaseSlider.addEventListener('touchmove', (e) => {
+            e.stopPropagation();
+            setTimeout(() => handlePhaseChange(e), 0);
+        });
+
+        // Кнопка сброса
         resetBtn.addEventListener('click', () => {
             ampSlider.value = "1.0";
             freqSlider.value = "1.0";
             phaseSlider.value = "0.0";
-            // принудительно обновить значения и рендер
+            
             A = 1.0;
             omega = 1.0;
             phase = 0.0;
+            
             ampValue.innerText = "1.00";
             freqValue.innerText = "1.00";
             phaseValue.innerText = "0π";
-            render();
+            
+            scheduleRender();
         });
 
-        // Экспорт в PNG
+        // Кнопка экспорта
         exportBtn.addEventListener('click', () => {
-            // Создаём временную ссылку
             const link = document.createElement('a');
             const phaseInPi = phase / Math.PI;
             const phaseStr = phaseInPi.toFixed(2).replace('.', '_');
@@ -557,7 +619,12 @@
             link.click();
         });
 
-        // Инициализация подписей и первого рендера
+        // Убираем блокировку touch-событий для canvas
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Предотвращаем скролл, но не блокируем полностью
+        });
+
+        // Инициализация
         function initialSync() {
             A = parseFloat(ampSlider.value);
             omega = parseFloat(freqSlider.value);
@@ -566,14 +633,16 @@
             updateLabels();
             render();
         }
+        
         initialSync();
 
-        // Обработка изменения размера экрана - перерисовка не нужна, 
-        // но добавим для случая, если что-то изменилось
+        // Обработка изменения размера экрана
+        let resizeTimeout;
         window.addEventListener('resize', () => {
-            // Перерисовываем, чтобы подписи корректно отображались 
-            // (канвас не меняет разрешение, но на всякий случай)
-            render();
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                render();
+            }, 100);
         });
     })();
 </script>
