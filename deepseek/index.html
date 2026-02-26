@@ -2,13 +2,16 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
     <title>Интерактивный синус: амплитуда, частота, фаза</title>
     <style>
         * {
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
         }
+
         body {
             background: linear-gradient(145deg, #f5f7fe 0%, #e9ecf7 100%);
             min-height: 100vh;
@@ -16,88 +19,121 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 16px;
         }
+
         .card {
-            background: rgba(255,255,255,0.7);
+            background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            border-radius: 40px;
-            padding: 30px 30px 40px 30px;
-            box-shadow: 0 30px 50px rgba(0, 10, 30, 0.2), inset 0 1px 4px rgba(255,255,255,0.8);
-            width: fit-content;
-            max-width: 1100px;
-            border: 1px solid rgba(255,255,255,0.6);
+            border-radius: clamp(24px, 5vw, 40px);
+            padding: clamp(20px, 4vw, 30px);
+            box-shadow: 0 30px 50px rgba(0, 10, 30, 0.2), inset 0 1px 4px rgba(255, 255, 255, 0.8);
+            width: 100%;
+            max-width: 1200px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
+
         h1 {
             font-weight: 500;
-            font-size: 2.2rem;
+            font-size: clamp(1.5rem, 5vw, 2.2rem);
             color: #11212e;
             margin: 0 0 12px 0;
             letter-spacing: -0.5px;
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
         }
+
         h1 span {
             background: #1e3b5c;
             color: white;
-            font-size: 1rem;
-            padding: 5px 14px;
+            font-size: clamp(0.8rem, 3vw, 1rem);
+            padding: 4px 12px;
             border-radius: 40px;
             font-weight: 400;
             opacity: 0.9;
+            white-space: nowrap;
         }
+
         .canvas-wrapper {
             background: #fdfdfe;
-            border-radius: 32px;
-            padding: 20px;
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.02), 0 12px 24px -8px rgba(0,20,40,0.2);
-            border: 1px solid rgba(255,255,255,0.7);
-            margin-bottom: 30px;
+            border-radius: clamp(20px, 4vw, 32px);
+            padding: clamp(12px, 3vw, 20px);
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.02), 0 12px 24px -8px rgba(0, 20, 40, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            margin-bottom: clamp(20px, 4vw, 30px);
+            width: 100%;
         }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 900 / 450; /* Сохраняем пропорции 2:1 */
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
         canvas {
             display: block;
-            width: 900px;
-            height: 450px;
-            border-radius: 20px;
+            width: 100%;
+            height: 100%;
+            border-radius: clamp(12px, 3vw, 20px);
             background: #ffffff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             cursor: crosshair;
+            touch-action: none; /* Предотвращает скролл при касании canvas на мобильных */
         }
+
         .control-panel {
             display: flex;
             flex-wrap: wrap;
-            gap: 40px;
+            gap: clamp(16px, 3vw, 40px);
             justify-content: center;
             align-items: flex-end;
-            margin-bottom: 30px;
-            background: rgba(255,255,255,0.4);
-            border-radius: 60px;
-            padding: 20px 30px;
+            margin-bottom: clamp(20px, 4vw, 30px);
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: clamp(30px, 6vw, 60px);
+            padding: clamp(16px, 3vw, 20px) clamp(20px, 4vw, 30px);
             backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
+
         .slider-group {
-            min-width: 180px;
+            min-width: 160px;
+            flex: 1 1 180px;
             text-align: center;
         }
+
         .slider-group label {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             font-weight: 600;
             color: #1e3b5c;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            font-size: 0.85rem;
+            letter-spacing: 0.6px;
+            font-size: clamp(0.75rem, 2vw, 0.85rem);
             margin-bottom: 8px;
+            white-space: nowrap;
         }
+
         .slider-group label i {
             font-style: normal;
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 3vw, 1.2rem);
         }
+
+        .slider-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
         input[type=range] {
-            width: 220px;
+            width: 100%;
+            max-width: 260px;
             height: 8px;
             background: linear-gradient(90deg, #6b8cae, #2b4b71);
             border-radius: 20px;
@@ -105,67 +141,123 @@
             appearance: none;
             outline: none;
         }
+
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 22px;
             height: 22px;
             background: white;
             border-radius: 50%;
-            box-shadow: 0 4px 8px rgba(0,20,40,0.3);
+            box-shadow: 0 4px 8px rgba(0, 20, 40, 0.3);
             border: 2px solid #1d3f5c;
             cursor: grab;
             transition: 0.05s;
         }
+
+        input[type=range]::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 20, 40, 0.3);
+            border: 2px solid #1d3f5c;
+            cursor: grab;
+            transition: 0.05s;
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
         .value-badge {
             display: inline-block;
             background: #1e3b5c;
             color: white;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
             padding: 4px 12px;
             border-radius: 50px;
             margin-top: 8px;
             min-width: 70px;
         }
+
         .action-buttons {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: clamp(12px, 3vw, 20px);
+            flex-wrap: wrap;
         }
+
         .btn {
             background: white;
             border: none;
-            padding: 14px 32px;
+            padding: clamp(12px, 3vw, 14px) clamp(20px, 5vw, 32px);
             border-radius: 50px;
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 3vw, 1.1rem);
             color: #1d3f5c;
-            box-shadow: 0 8px 16px -6px rgba(0,32,64,0.2);
+            box-shadow: 0 8px 16px -6px rgba(0, 32, 64, 0.2);
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             cursor: pointer;
             transition: all 0.15s;
-            border: 1px solid rgba(255,255,255,0.8);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            flex: 0 1 auto;
+            min-width: 160px;
         }
+
         .btn:hover {
             background: #eef3fc;
             box-shadow: 0 12px 22px -8px #1e3b5c80;
             transform: scale(1.02);
         }
+
         .btn:active {
             transform: scale(0.98);
             background: #d9e2f0;
         }
+
         .btn i {
-            font-size: 1.4rem;
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+            font-size: clamp(1.2rem, 4vw, 1.4rem);
+            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
         }
+
         footer {
             text-align: center;
-            font-size: 0.9rem;
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
             color: #4d6278;
             margin-top: 20px;
+        }
+
+        /* Специально для очень маленьких экранов */
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+            
+            .slider-group label {
+                white-space: normal;
+                flex-direction: column;
+                gap: 2px;
+            }
+            
+            .btn {
+                min-width: 140px;
+            }
+        }
+
+        /* Для устройств с сенсорным экраном увеличиваем область касания */
+        @media (hover: none) and (pointer: coarse) {
+            input[type=range]::-webkit-slider-thumb {
+                width: 28px;
+                height: 28px;
+            }
+            
+            .btn {
+                padding: 16px 24px;
+            }
         }
     </style>
 </head>
@@ -176,27 +268,35 @@
         <span>интерактив</span>
     </h1>
     <div class="canvas-wrapper">
-        <canvas id="sineCanvas" width="900" height="450"></canvas>
+        <div class="canvas-container">
+            <canvas id="sineCanvas" width="900" height="450"></canvas>
+        </div>
     </div>
 
     <div class="control-panel">
         <!-- Амплитуда -->
         <div class="slider-group">
             <label><i>📐</i> Амплитуда (A)</label>
-            <input type="range" id="ampSlider" min="0.2" max="2.5" value="1.0" step="0.01">
+            <div class="slider-wrapper">
+                <input type="range" id="ampSlider" min="0.2" max="2.5" value="1.0" step="0.01">
+            </div>
             <div class="value-badge" id="ampValue">1.00</div>
         </div>
         <!-- Частота (ω) -->
         <div class="slider-group">
             <label><i>🌀</i> Частота (ω)</label>
-            <input type="range" id="freqSlider" min="0.5" max="3.5" value="1.0" step="0.02">
+            <div class="slider-wrapper">
+                <input type="range" id="freqSlider" min="0.5" max="3.5" value="1.0" step="0.02">
+            </div>
             <div class="value-badge" id="freqValue">1.00</div>
         </div>
         <!-- Фаза (φ) в радианах, но показываем в pi для наглядности -->
         <div class="slider-group">
             <label><i>⏱️</i> Фаза (φ) [×π рад]</label>
-            <input type="range" id="phaseSlider" min="-2.0" max="2.0" value="0.0" step="0.02">
-            <div class="value-badge" id="phaseValue">0.00π</div>
+            <div class="slider-wrapper">
+                <input type="range" id="phaseSlider" min="-2.0" max="2.0" value="0.0" step="0.02">
+            </div>
+            <div class="value-badge" id="phaseValue">0π</div>
         </div>
     </div>
 
@@ -225,9 +325,9 @@
         const exportBtn = document.getElementById('exportBtn');
         const resetBtn = document.getElementById('resetBtn');
 
-        // Параметры canvas
-        const w = canvas.width;
-        const h = canvas.height;
+        // Параметры canvas (физические пиксели остаются 900x450)
+        const w = canvas.width;  // 900
+        const h = canvas.height; // 450
         const padding = { left: 70, right: 30, top: 30, bottom: 40 };
         const graphWidth = w - padding.left - padding.right;
         const graphHeight = h - padding.top - padding.bottom;
@@ -248,8 +348,14 @@
             ampValue.innerText = A.toFixed(2);
             freqValue.innerText = omega.toFixed(2);
             // фаза: показываем как число, умноженное на π
-            const phaseInPi = (phase / Math.PI).toFixed(2);
-            phaseValue.innerText = (phase === 0) ? '0π' : (phaseInPi + 'π');
+            const phaseInPi = phase / Math.PI;
+            const formatted = phaseInPi.toFixed(2);
+            // Убираем .00 если целое число
+            if (Math.abs(phaseInPi) < 0.01) {
+                phaseValue.innerText = '0π';
+            } else {
+                phaseValue.innerText = (phaseInPi > 0 ? '+' : '') + formatted + 'π';
+            }
         }
 
         // Преобразование координат (x данных -> экран X)
@@ -333,8 +439,9 @@
             ctx.font = "500 15px 'Segoe UI', 'Roboto'";
             ctx.fillStyle = "#1e3b5c";
             ctx.textAlign = "right";
+            const phaseInPi = phase / Math.PI;
             ctx.fillText("y = " + A.toFixed(2) + " · sin(" + omega.toFixed(2) + "·x " + 
-                (phase >= 0 ? "+" : "") + (phase / Math.PI).toFixed(2) + "π)", w - 20, 45);
+                (phase >= 0 ? "+" : "") + phaseInPi.toFixed(2) + "π)", w - 20, 45);
             ctx.restore();
         }
 
@@ -404,13 +511,25 @@
             let phaseInPi = parseFloat(e.target.value);
             phase = phaseInPi * Math.PI;   // радианы
             const display = phaseInPi.toFixed(2);
-            phaseValue.innerText = (phaseInPi === 0) ? '0π' : (display + 'π');
+            // Показываем с плюсом для положительных значений
+            if (Math.abs(phaseInPi) < 0.01) {
+                phaseValue.innerText = '0π';
+            } else {
+                phaseValue.innerText = (phaseInPi > 0 ? '+' : '') + display + 'π';
+            }
             render();
         }
 
         ampSlider.addEventListener('input', handleAmpChange);
         freqSlider.addEventListener('input', handleFreqChange);
         phaseSlider.addEventListener('input', handlePhaseChange);
+
+        // Поддержка touch-событий для мобильных устройств
+        ['touchstart', 'touchmove', 'touchend'].forEach(eventType => {
+            ampSlider.addEventListener(eventType, (e) => e.preventDefault());
+            freqSlider.addEventListener(eventType, (e) => e.preventDefault());
+            phaseSlider.addEventListener(eventType, (e) => e.preventDefault());
+        });
 
         // Кнопка сброса (амплитуда 1, частота 1, фаза 0)
         resetBtn.addEventListener('click', () => {
@@ -431,7 +550,9 @@
         exportBtn.addEventListener('click', () => {
             // Создаём временную ссылку
             const link = document.createElement('a');
-            link.download = `sine_A${A.toFixed(2)}_w${omega.toFixed(2)}_phase${(phase/Math.PI).toFixed(2)}pi.png`;
+            const phaseInPi = phase / Math.PI;
+            const phaseStr = phaseInPi.toFixed(2).replace('.', '_');
+            link.download = `sine_A${A.toFixed(2)}_w${omega.toFixed(2)}_phase${phaseStr}pi.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
         });
@@ -447,10 +568,13 @@
         }
         initialSync();
 
-        // Бонус: подстройка под ресайз окна не нужна — канвас фиксированный.
-        // Но если изменится что-то еще, просто рендерим заново.
-        // Дополнительно: обрабатываем изменение размера (на случай если браузер зумирует — канвас не ломается)
-        window.addEventListener('resize', () => { }); // ничего не делаем, просто триггер пустой
+        // Обработка изменения размера экрана - перерисовка не нужна, 
+        // но добавим для случая, если что-то изменилось
+        window.addEventListener('resize', () => {
+            // Перерисовываем, чтобы подписи корректно отображались 
+            // (канвас не меняет разрешение, но на всякий случай)
+            render();
+        });
     })();
 </script>
 </body>
