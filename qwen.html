@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Визуализация sin(x)</title>
+    <!-- Подключаем библиотеку Chart.js через CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+        }
+
+        /* Панель управления */
+        .controls {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .value-display {
+            color: var(--primary-color);
+            font-family: monospace;
+        }
+
+        /* Область графика */
+        .chart-container {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            flex: 2;
+            position: relative;
+            min-height: 400px;
+        }
+
+        /* Кнопка экспорта */
+        .btn-export {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-export:hover {
+            background-color: #2563eb;
+        }
+
+        h1 {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>График y = A·sin(Bx + C)</h1>
+        
+        <!-- Панель управления -->
+        <div class="controls">
+            <h3>Параметры</h3>
+            
+            <div class="control-group">
+                <label>
+                    Амплитуда (A):
+                    <span id="val-amp" class="value-display">1.0</span>
+                </label>
+                <input type="range" id="amp" min="0" max="5" step="0.1" value="1">
+            </div>
+
+            <div class="control-group">
+                <label>
+                    Частота (B):
+                    <span id="val-freq" class="value-display">1.0</span>
+                </label>
+                <input type="range" id="freq" min="0.1" max="5" step="0.1" value="1">
+            </div>
+
+            <div class="control-group">
+                <label>
+                    Фаза (C):
+                    <span id="val-phase" class="value-display">0.0</span>
+                </label>
+                <input type="range" id="phase" min="-6.28" max="6.28" step="0.1" value="0">
+                <small style="color: #666; display: block; margin-top: 5px;">(от -2π до 2π)</small>
+            </div>
+
+            <button class="btn-export" onclick="downloadChart()">Скачать график (PNG)</button>
+        </div>
+
+        <!-- График -->
+        <div class="chart-container">
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Инициализация переменных
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const ampInput = document.getElementById('amp');
+        const freqInput = document.getElementById('freq');
+        const phaseInput = document.getElementById('phase');
+        
+        const valAmp = document.getElementById('val-amp');
+        const valFreq = document.getElementById('val-freq');
+        const valPhase = document.getElementById('val-phase');
+
+        // Генерация данных для оси X (от -10 до 10 с шагом 0.1)
+        const xValues = [];
+        for (let x = -12; x <= 12; x += 0.1) {
+            xValues.push(x.toFixed(1));
+        }
+
+        // Функция расчета Y в зависимости от параметров
+        function calculateData(amplitude, frequency, phase) {
+            return xValues.map(x => {
+                return amplitude * Math.sin(frequency * parseFloat(x) + phase);
+            });
+        }
+
+        // Создание графика
+        const myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: xValues,
+                datasets: [{
+                    label: 'y = A·sin(Bx + C)',
+                    data: calculateData(1, 1, 0),
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 2,
+                    pointRadius: 0, // Скрываем точки для плавности
+                    fill: true,
+                    tension: 0.4 // Сглаживание линий
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 0 // Отключаем анимацию для мгновенного отклика ползунков
+                },
+                scales: {
+                    y: {
+                        min: -6,
+                        max: 6,
+                        grid: {
+                            color: '#e5e7eb'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                }
+            }
+        });
+
+        // Функция обновления графика
+        function updateChart() {
+            const amp = parseFloat(ampInput.value);
+            const freq = parseFloat(freqInput.value);
+            const phase = parseFloat(phaseInput.value);
+
+            // Обновляем текстовые значения
+            valAmp.textContent = amp.toFixed(1);
+            valFreq.textContent = freq.toFixed(1);
+            valPhase.textContent = phase.toFixed(1);
+
+            // Пересчитываем данные
+            const newData = calculateData(amp, freq, phase);
+            myChart.data.datasets[0].data = newData;
+            
+            // Обновляем график
+            myChart.update();
+        }
+
+        // Слушатели событий для ползунков
+        ampInput.addEventListener('input', updateChart);
+        freqInput.addEventListener('input', updateChart);
+        phaseInput.addEventListener('input', updateChart);
+
+        // Функция экспорта
+        function downloadChart() {
+            const link = document.createElement('a');
+            link.download = 'sin_graph.png';
+            link.href = myChart.toBase64Image('image/png', 1);
+            link.click();
+        }
+    </script>
+</body>
+</html>
